@@ -199,6 +199,7 @@ function buttonControl() {
     z.style.display = "none";
   }
 }
+
 // go forward a slide
 function advanceSlide() {
   // increment to next item in slide deck
@@ -293,9 +294,9 @@ function filterFeatureGroup(dat, field, value) {
     }
     else if (field == "ROUTE") {
       //console.log('filter by ROUTE');
-      var r = features.properties[field];
+      var ROUTE = features.properties[field];
       //console.log(r);
-      if (r.includes(value)) {filteredData.push(features);}
+      if (ROUTE == value) {filteredData.push(features);}
     }
     else if (field == "Stopid") {
       //console.log('filter by ROUTE');
