@@ -20,11 +20,11 @@ var Thunderforest_Transport = L.tileLayer(
   }
 );
 
-var center = [39.97076858391126, -75.14212553389372];
+var centerCoordinates = [39.99106237125379, -75.14768600463869];
 
 // set up the map; make transit basemap the default
 var map = L.map("map", {
-  center: [39.97076858391126, -75.14212553389372],
+  center: centerCoordinates,
   zoom: 12,
   layers: [CartoDB_Positron]
 });
@@ -323,7 +323,7 @@ function clearShapes() { if(shape != null) {shape.removeFrom(map);} }
 
 function resetMap() {
   map.addLayer(CartoDB_Positron);
-  map.setView([39.97076858391126, -75.14212553389372], 12);
+  map.setView(centerCoordinates, 12);
 }
 
 function switchToAerial() {
