@@ -8,9 +8,11 @@
 * Figure out Slide 6 and write logic
 * Fill out paragraph sections for each slide
 * [DONE] Fix the bug where stop data is shown for stops that contain the similar route numbers (i.e. 117 and 17)
-* Handle the odd routes like the G, R, etc.
+* Handle the odd routes like the G, R, etc. (probably needs to be done in R)
 * color stops on the route slides by direction
+  - Idea: write a pathOpts function outside of makeMarkers() that is called within
 * User input on bus node sizes
 * Map and toggle to showing routes by ridership
-* Style the route lines
+* [DONE] Style the route lines
+* Filter out the point inside the geoJSON line file
 * Fix popup options based on whether showing all stops or filtered by route
