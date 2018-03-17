@@ -26,11 +26,13 @@
         every run on every bus route each season. This uses data from each 2014-2017
         Spring sampling. Data processing was completed in R with help from the
         beautiful DPLYR package. </p>
+        <p><input id="number-input1" type="text" style = "height: 24px;
+      width: 250px" type="number" placeholder="Enter Route then press 'enter'" value="47" enabled onkeyup="slideDeck[currentSlide].visual()"> </p>
 
     </div>
     <div class = "control">
-      <span> <button class="mdl-button mdl-js-button" onclick="returnSlide()"> Previous </button> </span>
-      <span> <button class="mdl-button mdl-js-button" onclick="advanceSlide()"> Next </button> </span>
+      <span> <button class="mdl-button mdl-js-button" id="button-backward" onclick="returnSlide()"> Previous </button> </span>
+      <span> <button class="mdl-button mdl-js-button" id="button-forward" onclick="advanceSlide()"> Next </button> </span>
     </div>
 
 

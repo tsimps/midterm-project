@@ -7,15 +7,24 @@ var CartoDB_Positron = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fast
 
 var MapBoxStyle = L.tileLayer('https://api.mapbox.com/styles/v1/tandrewsimpson/cjeujps1g0kjw2rpns6kgmcv4/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGFuZHJld3NpbXBzb24iLCJhIjoiY2ludXlsY3ZsMTJzN3Rxa2oyNnplZjB1ZyJ9.bftIKd0sAwvSIGWxIDbSSw', {
   maxZoom: 20,
-  minZoom: 16,
   opacity: 0.75
 });
 
-var center = [39.97076858391126, -75.13526458991693];
+var Thunderforest_Transport = L.tileLayer(
+  "https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=39079820db6845f79a313d7d4724e1a9",
+  {
+    attribution:
+      '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    apikey: "39079820db6845f79a313d7d4724e1a9",
+    maxZoom: 22
+  }
+);
+
+var center = [39.97076858391126, -75.14212553389372];
 
 // set up the map; make transit basemap the default
 var map = L.map("map", {
-  center: [39.97076858391126, -75.13526458991693],
+  center: [39.97076858391126, -75.14212553389372],
   zoom: 12,
   layers: [CartoDB_Positron]
 });
@@ -23,7 +32,8 @@ map.zoomControl.setPosition("topleft");
 
 var baseLayers = {
   "Mapbox Aerial": MapBoxStyle,
-  "CartoDB Light": CartoDB_Positron
+  "CartoDB Light": CartoDB_Positron,
+  "Transit Routes": Thunderforest_Transport
 };
 L.control.layers(baseLayers).addTo(map);
 
@@ -34,6 +44,7 @@ var jsonLink1 =
 var markers;
 var shape;
 var data;
+var stopsRoutesData;
 //$.getJSON(jsonLink1).done(function(data){ makeMarkersJSON(data); });
 //json = $.getJSON(jsonLink1);
 
@@ -61,7 +72,7 @@ var slide0 = {
 var slide1 = {
   slideNumber: 1,
   title: function() {document.getElementById("sidebar-header").innerHTML = "Major Bus Nodes";},
-  body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 1";},
+  body: function() {document.getElementById("sidebar-text").innerHTML = "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bu stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";},
   debug: function() {console.log('0');},
   visual: function() {
     clearMarkers();
@@ -91,43 +102,108 @@ var slide2 = {
 var slide3 = {
   slideNumber: 3,
   debug: function() {console.log('3');},
-  title: function() {document.getElementById("sidebar-header").innerHTML = "Examining the Route 47";},
+  title: function() {document.getElementById("sidebar-header").innerHTML = "A Closer Look: Broad & Olney";},
   body: function() {document.getElementById("sidebar-text").innerHTML = "This shows...";},
   visual: function() {
     clearMarkers();
     clearShapes();
-    makeShape(47).addTo(map);
-    feats = filterFeatureGroup(data, "routeNumbers", 47);
-    makeMarkers(feats, 0.75).addTo(map);
-    switchToLite();
-    map.fitBounds(markers.getBounds());
+    map.setView([40.038833582357064, -75.14461964710792], 18);
+    switchToAerial();
+    makeMarkers(data, 0.75)
+    .addTo(map);
+    switchToTransport();
   }
 };
 
 var slide4 = {
   slideNumber: 4,
-  debug: function() {console.log('4');},
-  title: function() {document.getElementById("sidebar-header").innerHTML = "Slide 4";},
-  body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 4";},
+  debug: function() {console.log('3');},
+  title: function() {document.getElementById("sidebar-header").innerHTML = "Examining Ridership by Stops on a Route";},
+  body: function() {document.getElementById("sidebar-text").innerHTML = "This shows the ridership garnered by each stop on a particular route, changable by the user input below.";},
   visual: function() {
+    // get input
+    input = ($( "input[id=number-input1]").val());
+
+    switchToLite();
+    route = input;
     clearMarkers();
-    clearShapes();  }
+    clearShapes();
+    makeShape(route).addTo(map);
+    feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
+    makeMarkers(feats, 0.75).addTo(map);
+    map.fitBounds(markers.getBounds());
+
+    if (event.keyCode === 13) {
+      route = input;
+      clearMarkers();
+      clearShapes();
+      makeShape(route).addTo(map);
+      feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
+      makeMarkers(feats, 0.75).addTo(map);
+      map.fitBounds(markers.getBounds());
+    }
+  }
 };
 
 var slide5 = {
   slideNumber: 5,
-  debug: function() {console.log('5');},
-  title: function() {document.getElementById("sidebar-header").innerHTML = "Slide 5";},
+  debug: function() {console.log('4');},
+  title: function() {document.getElementById("sidebar-header").innerHTML = "Examining the Route 47: Congestion";},
   body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 5";},
+  visual: function() {
+    clearMarkers();
+    clearShapes();
+
+
+    if (event.keyCode === 13) {
+      route = input;
+      clearMarkers();
+      clearShapes();
+      makeShape(route).addTo(map);
+      feats = filterFeatureGroup(data, "routeNumbers", route);
+      makeMarkers(feats, 0.75).addTo(map);
+      map.fitBounds(markers.getBounds());
+    }
+  }
+};
+
+var slide6 = {
+  slideNumber: 6,
+  debug: function() {console.log('5');},
+  title: function() {document.getElementById("sidebar-header").innerHTML = "Slide 6";},
+  body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 6";},
   visual: function() {}
 };
 
-var slideDeck = [slide0, slide1, slide2, slide3, slide4, slide5];
+var slideDeck = [slide0, slide1, slide2, slide3, slide4, slide5, slide6];
 
+function buttonControl() {
+  var y = document.getElementById("button-backward");
+  if ( currentSlide === 0) {
+      y.style.display = "none";
+  } else {
+      y.style.display = "";
+  }
+
+  var x = document.getElementById("button-forward");
+  if ( currentSlide === slideDeck.length - 1) {
+    x.style.display = "none";
+  } else {
+    x.style.display = "";
+  }
+
+  var z = document.getElementById("number-input1");
+  if ( currentSlide === 4 | currentSlide === 5) {
+    z.style.display = "";
+  } else {
+    z.style.display = "none";
+  }
+}
 // go forward a slide
 function advanceSlide() {
   // increment to next item in slide deck
   currentSlide += 1;
+  buttonControl();
   //console.log('CURRENTSLIDE', currentSlide);
 
   slideDeck[currentSlide].title();
@@ -141,6 +217,7 @@ function advanceSlide() {
 function returnSlide() {
   // return to previous item in slide deck
   currentSlide -= 1;
+  buttonControl();
 
   slideDeck[currentSlide].title();
   slideDeck[currentSlide].body();
@@ -201,16 +278,30 @@ function makeMarkers(dat, opacity = 0.2) {
 }
 
 // take in a json file and filter out based on values
-function filterFeatureGroup(data, field, value) {
+function filterFeatureGroup(dat, field, value) {
   var filteredData = [];
 
   // filter field based on value
-  _.each(this.data, function(features) {
+  _.each(dat, function(features) {
+    //console.log(features.properties[field]);
     //feat += 1;
     if (field == "routeNumbers") {
       //console.log('filter by route');
       var str = features.properties[field];
+      //console.log(str);
       if (str.includes(value)) {filteredData.push(features);}
+    }
+    else if (field == "ROUTE") {
+      //console.log('filter by ROUTE');
+      var r = features.properties[field];
+      //console.log(r);
+      if (r.includes(value)) {filteredData.push(features);}
+    }
+    else if (field == "Stopid") {
+      //console.log('filter by ROUTE');
+      var stopid = features.properties[field];
+      //console.log(stopid);
+      if (stopid === value) {filteredData.push(features);}
     }
     else {
       if(features.properties[field] > value) {
@@ -232,20 +323,28 @@ function clearShapes() { if(shape != null) {shape.removeFrom(map);} }
 
 function resetMap() {
   map.addLayer(CartoDB_Positron);
-  map.setView([39.97076858391126, -75.13526458991693], 12);
+  map.setView([39.97076858391126, -75.14212553389372], 12);
 }
 
 function switchToAerial() {
   map.addLayer(MapBoxStyle);
   map.removeLayer(CartoDB_Positron);
+  map.removeLayer(Thunderforest_Transport);
 
 }
 
 function switchToLite() {
   map.addLayer(CartoDB_Positron);
   map.removeLayer(MapBoxStyle);
-
+  map.removeLayer(Thunderforest_Transport);
 }
+
+function switchToTransport() {
+  map.addLayer(Thunderforest_Transport);
+  map.removeLayer(MapBoxStyle);
+  map.removeLayer(CartoDB_Positron);
+}
+
 //shape.getLayers()[0].feature.geometry.geometries.pop()
 function filterShapes(shape) {
   //this.shape.getLayers()[0].feature.geometry.geometries.pop();
@@ -271,12 +370,16 @@ function makeShape(route) {
 }
 
 $(document).ready(function() {
-  //slide0.visual();
+  buttonControl();
   $.getJSON(jsonLink1).done( function(json){
     //console.log(json);
     data = json.features;
     slide0.visual();
   });
+  stopsRoutesData = $.getJSON('https://raw.githubusercontent.com/tsimps/midterm-project/master/data/stops_routes_full.geojson')
+  .done( function(json) {
+    stopsRoutesData = json.features; }
+  );
 });
 
 /*
