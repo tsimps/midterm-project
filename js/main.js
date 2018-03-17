@@ -1,24 +1,49 @@
 // creat transit and aerial basemap versions to be controlled with boxes
-var Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-  maxZoom: 16
+var CartoDB_Positron = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
 });
+
+var MapBoxStyle = L.tileLayer('https://api.mapbox.com/styles/v1/tandrewsimpson/cjeujps1g0kjw2rpns6kgmcv4/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGFuZHJld3NpbXBzb24iLCJhIjoiY2ludXlsY3ZsMTJzN3Rxa2oyNnplZjB1ZyJ9.bftIKd0sAwvSIGWxIDbSSw', {
+  maxZoom: 20,
+  minZoom: 16,
+  opacity: 0.75
+});
+
+var center = [39.97076858391126, -75.13526458991693];
 
 // set up the map; make transit basemap the default
 var map = L.map("map", {
   center: [39.97076858391126, -75.13526458991693],
   zoom: 12,
-  layers: [Esri_WorldGrayCanvas]
+  layers: [CartoDB_Positron]
 });
-map.zoomControl.setPosition("bottomleft");
+map.zoomControl.setPosition("topleft");
+
+var baseLayers = {
+  "Mapbox Aerial": MapBoxStyle,
+  "CartoDB Light": CartoDB_Positron
+};
+L.control.layers(baseLayers).addTo(map);
+
 
 var currentSlide = 0;
 var jsonLink1 =
 "https://raw.githubusercontent.com/tsimps/tsimps.github.io/master/data/shelter_json_31318.geojson";
-var stops;
-var json;
-$.getJSON(jsonLink1).done(function(data){ makeStopFeatureGroup(data); });
-json = $.getJSON(jsonLink1);
+var markers;
+var shape;
+var data;
+//$.getJSON(jsonLink1).done(function(data){ makeMarkersJSON(data); });
+//json = $.getJSON(jsonLink1);
+
+var getData = function() {
+  return $.getJSON(jsonLink1).then( function(json){
+    console.log(json);
+    return json.features;
+  });
+  //return data;
+};
 
 var slide0 = {
   slideNumber: 0,
@@ -26,10 +51,10 @@ var slide0 = {
   body: function() {document.getElementById("sidebar-text").innerHTML = "This project walks through a visualization of various bus ridership data. As you see on the map, Philadelphia has a lot of bus stops and a lot of bus riders (182 million annual unlinked trips). Data for this project is sourced from SEPTA, Automated Passenger Count (APC). These devices sample every run on every bus route each season. This uses data from each 2014-2017 Spring sampling. Data processing was completed in R with help from the beautiful DPLYR package.";},
   debug: function() {console.log('0');},
   visual: function(){
-    stops.addTo(map)
-    //clearStops();
-    //clearMarkers();
-    //$.getJSON(jsonLink1).done(function(data){ makeStops(data); });
+    clearMarkers();
+    clearShapes();
+    resetMap();
+    makeMarkers(data).addTo(map);
   }
 };
 
@@ -39,38 +64,44 @@ var slide1 = {
   body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 1";},
   debug: function() {console.log('0');},
   visual: function() {
-    console.log('VISUAL');
-    stops.addTo(map);
-    stops.removeFrom(map);
-
-    // pull json
-    console.log(json.responseJSON);
-
-    // once done, filter json
-    filterFeatureGroup(json.responseJSON, 'field', 'value');
-
-    // map the jawn
-    //makeStops(filteredJson);
-
+    clearMarkers();
+    clearShapes();
+    resetMap();
+    //map.addLayer(baseLayers[1]);
+    feats = filterFeatureGroup(data, 'avg_boards', 200);
+    makeMarkers(feats).addTo(map);
   },
 };
 
 var slide2 = {
   slideNumber: 2,
-  title: function() {document.getElementById("sidebar-header").innerHTML = "Slide 2";},
-  body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 2";},
+  title: function() {document.getElementById("sidebar-header").innerHTML = "A Closer Look: Broad & Olney";},
+  body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 3";},
   debug: function() {console.log('2');},
   visual: function() {
-
+    clearMarkers();
+    clearShapes();
+    map.setView([40.038833582357064, -75.14461964710792], 18);
+    switchToAerial();
+    makeMarkers(data, 0.75)
+    .addTo(map);
   }
 };
 
 var slide3 = {
   slideNumber: 3,
   debug: function() {console.log('3');},
-  title: function() {document.getElementById("sidebar-header").innerHTML = "Slide 3";},
-  body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 2";},
-  visual: function() {}
+  title: function() {document.getElementById("sidebar-header").innerHTML = "Examining the Route 47";},
+  body: function() {document.getElementById("sidebar-text").innerHTML = "This shows...";},
+  visual: function() {
+    clearMarkers();
+    clearShapes();
+    makeShape(47).addTo(map);
+    feats = filterFeatureGroup(data, "routeNumbers", 47);
+    makeMarkers(feats, 0.75).addTo(map);
+    switchToLite();
+    map.fitBounds(markers.getBounds());
+  }
 };
 
 var slide4 = {
@@ -78,7 +109,9 @@ var slide4 = {
   debug: function() {console.log('4');},
   title: function() {document.getElementById("sidebar-header").innerHTML = "Slide 4";},
   body: function() {document.getElementById("sidebar-text").innerHTML = "Slide 4";},
-  visual: function() {}
+  visual: function() {
+    clearMarkers();
+    clearShapes();  }
 };
 
 var slide5 = {
@@ -113,6 +146,7 @@ function returnSlide() {
   slideDeck[currentSlide].body();
   slideDeck[currentSlide].visual();
 
+
   return slideDeck[currentSlide];
 }
 
@@ -132,124 +166,135 @@ normalize = val => {
   return x;
 };
 
-/*
-var parseData = function(res) {
-  // Parse the JSON returned (res)
-  var jsonFeatures = res.responseJSON.features;
-
-  // Store our (now parsed) data to the global variable `data`
-  data = _.chain(jsonFeatures)
-  .map(function(datum) {
-
-    var pathOpts = {
-      //radius: allStops[i].Ridership * 1.75,
-      radius: normalize(properties.avg_boards),
-      fillColor: "#4CAF50",
-      stroke: false,
-      fillOpacity: 0.2
-    };
-
-    // Actually make the marker object a part of our data for later use.
-    datum.marker = L.circleMarker([properties.Latitude, properties.Longitude], pathOpts);
-    return datum;
-
-  }).groupBy(function(datum) {
-
-    // groupBy breaks the data up into groups (grouped by continent name here)
-    return datum.ContinentName;
-
-  }).mapObject(function(group) {
-
-    // It is an object after the `groupBy` call (e.g. {group1: [grouped1, grouped2], group2: [grouped3]})
-    var markerArray = _.map(group, function(datum) { return datum.marker; });
-    var fitBoundsOptions = { padding: [15, 15] };  // An options object
-
-    return {
-      data: group,
-      features: L.featureGroup(markerArray)
-      .on('click', function() {  // Bind a function onto any click on this `featureGroup`
-        map.fitBounds(this.getBounds(), fitBoundsOptions);
-      })
-    };
-  }).value();
-
-  // Add the featureGroups to our map
-  _.each(data, function(datum) { datum.features.addTo(map); });
-};
-*/
-
-/*
-* This function filters our data and plots it
-
-var filterAndPlot = function() {
-  _.each(data, function(continent) {
-    var markerArray = _.chain(continent.data)
-    .filter(function(country) {
-      var condition = true;
-      if (stringFilter) {
-        condition = condition && country.CountryName.toLowerCase().includes(stringFilter);
-      }
-      if (selectValue !== 'All') {
-        condition = condition && country.ContinentName === selectValue;
-      }
-      return condition;
-    })
-    .map(function(country) { return country.marker; })
-    .value();
-
-    // clear the continent featureLayers
-    continent.features.clearLayers();
-
-    // Notice that our featureGroup was never removed from the map - all we have to do is add
-    // markers to one of our featureGroups and it will immediately appear on the map
-    _.each(markerArray, function(marker) { continent.features.addLayer(marker); });
-  });
-};
-*/
-
 // map the stop makers from a json file
-function makeStopFeatureGroup(json) {
-  console.log("JSON", json);
+function makeMarkers(dat, opacity = 0.2) {
+  //console.log("JSON", json);
 
   // create layer group of station markers
-  stops = L.featureGroup(
-    _.map(json.features, function(feature) {
-
+  markers = L.featureGroup(
+    _.map(dat, function(feature) {
+      //console.log(feature.properties.avg_boards);
       var pathOpts = {
         //radius: allStops[i].Ridership * 1.75,
         radius: normalize(feature.properties.avg_boards),
         fillColor: "#4CAF50",
         stroke: false,
-        fillOpacity: 0.2
+        fillOpacity: opacity
       };
 
-      return L.circleMarker([feature.properties.Latitude, feature.properties.Longitude], pathOpts).addTo(map);
+      return L.circleMarker([feature.properties.Latitude, feature.properties.Longitude], pathOpts)
+      .bindPopup(
+        "<b> Stop ID: </b>" +
+        feature.properties.Stopid +
+        "<br><b>Stop Name: </b>" +
+        feature.properties.Stop_Name +
+        "<br><b>Spring '14-'17 Average Boardings Per Day: </b>" +
+        Math.round(feature.properties.avg_boards) +
+        "<br><b>Direction: </b>" +
+        feature.properties.Direction +
+        "<br><b>Routes that Stop Here: </b>" +
+        feature.properties.routeNumbers
+      );
     } // close _.map()
-  )
-);
+  ));
+  return markers;
 }
-
 
 // take in a json file and filter out based on values
-function filterFeatureGroup(json, field, value) {
-  var feat = 0;
+function filterFeatureGroup(data, field, value) {
+  var filteredData = [];
 
   // filter field based on value
-  _.each(json.features, function(features) {
-    feat += 1;
+  _.each(this.data, function(features) {
+    //feat += 1;
+    if (field == "routeNumbers") {
+      //console.log('filter by route');
+      var str = features.properties[field];
+      if (str.includes(value)) {filteredData.push(features);}
+    }
+    else {
+      if(features.properties[field] > value) {
+        filteredData.push(features);
+      }
+      //console.log(features.properties[field]); //how to refer to a value
+    }
 
-    console.log(features.properties[field]); //how to refer to a value
 
   });
-  console.log(feat);
-  //return filteredJson;
+  //console.log(filteredData);
+
+  return filteredData;
 }
 
-function clearMarkers() {
-  map.removeLayer(stops);
+function clearMarkers() { if(markers != null) {markers.removeFrom(map);} }
+function clearShapes() { if(shape != null) {shape.removeFrom(map);} }
+
+
+function resetMap() {
+  map.addLayer(CartoDB_Positron);
+  map.setView([39.97076858391126, -75.13526458991693], 12);
 }
 
-// bring in a kml file and add it to the map
-function drawRoute(kml) {
+function switchToAerial() {
+  map.addLayer(MapBoxStyle);
+  map.removeLayer(CartoDB_Positron);
 
 }
+
+function switchToLite() {
+  map.addLayer(CartoDB_Positron);
+  map.removeLayer(MapBoxStyle);
+
+}
+//shape.getLayers()[0].feature.geometry.geometries.pop()
+function filterShapes(shape) {
+  //this.shape.getLayers()[0].feature.geometry.geometries.pop();
+  //return shape;
+
+  feature = this.shape.getLayers()[0].feature;
+  //console.log('FEATURE ', feature);
+
+
+  for (var i = 0; i < feature.geometry.geometries.length; i++) {
+    console.log('a');
+    console.log(feature.geometry.geometries[i].type);
+    feature.geometry.geometries.type !== 'Point';
+  }
+
+}
+
+// bring in a kml file, conver to L.geojson
+function makeShape(route) {
+  shape = omnivore.kml('https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/'+route+'.kml');
+  //newShape = filterShapes(shape);
+  return shape;
+}
+
+$(document).ready(function() {
+  //slide0.visual();
+  $.getJSON(jsonLink1).done( function(json){
+    //console.log(json);
+    data = json.features;
+    slide0.visual();
+  });
+});
+
+/*
+map.on('zoomend', function() {
+    var currentZoom = map.getZoom();
+    console.log('CURRENTZOOM', currentZoom);
+
+    if (currentZoom > 15) {
+      console.log(markers.getLayers()[0].options.radius);
+
+      markers.setStyle(
+        { radius: 10 }
+      );
+      //markers.setSyle({
+        //radius: markers.eachLayer(function(layer){return layer.options.radius;})
+      //});
+
+    } else {
+
+    }});
+*/
