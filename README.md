@@ -10,13 +10,10 @@
 * Integrate material design library with everything
 * Write a congestion rating formula that considers the avg speed and the volatility to produce a congestion score
 * Add popups across platform to aid user comprehension
-* Look at custom styling a MapBoxStyle with BSL/MFL
 * Add an opening card
-* Change Broad & Olney slide to allow user to choose one of ~4 major transfer Nodes
-  * Also needs to show BSL
-  * Needs to show routes better
-  * The next slide isn't great 
-
+* Add some feature to slide 2 to make it more informative
+  * show routes that shop at the stop selected?
+* Rebuild slide 3
 
 ## TO DONE
 * [DONE] Hide/show buttons and user input
@@ -30,6 +27,9 @@
 * [DONE] Figure out how to take out multiple routes and markers. Probably needs to rewrite markers and shapes are handled
 * [DONE] Figure out Slide 6 and write logic
 * [DONE] Figure out Slide 7 and write logic
+* [DONE] Add BSL/MFL to the map
+* [DONE] Add user option to the last two slides to take input on how many "best" and "worst" routes to show
+* [DONE] Change Broad & Olney slide to allow user to choose one of ~4 major transfer Nodes
 
 ## EXTENTIONS FOR FINAL
 * Integrate Chart.js features to display statics on stops/routes

@@ -28,37 +28,52 @@
       beautiful DPLYR package. </p>
 
 
-        <!-- <p><input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="750" value="200" tabindex="0" step="25" onchange="slideDeck[currentSlide].visual()"></p> -->
-          <span>
-            <h3 id='s1-head'> Filter by Average Daily Boards: </h3>
-            <input id='s1-slide' type="range" min="0" max="1500" value="200" tabindex="0" step="25" onchange="slideDeck[currentSlide].visual()">
-            <input type="text" id="s1-text" value="" width = "50px">
-          </span>
-          <span>
-            <h3 id='filter-head'> Filter by Route:
-            <input id="number-input1" type="text" style = "height: 24px; width: 250px" type="number" placeholder="Enter Route then press 'enter'" value="47" enabled onkeyup="slideDeck[currentSlide].visual()"> </h3>
-          </span>
+      <!-- <p><input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="750" value="200" tabindex="0" step="25" onchange="slideDeck[currentSlide].visual()"></p> -->
+      <span>
+        <h3 id='s1-head'> Filter by Average Daily Boards: </h3>
+        <input id='s1-slide' type="range" min="0" max="1500" value="200" tabindex="0" step="25" onchange="slideDeck[currentSlide].visual()">
+        <input type="text" id="s1-text" value="" width = "50px">
+      </span>
+      <span>
+        <!-- The second value will be selected initially -->
+        <h3 id='select-1-head'> Choose a Major Bus Node: </h3>
+        <select id="select-1" class = "input-field col s12" onchange="slideDeck[currentSlide].visual()"> <!--Supplement an id here instead of using 'text'-->
+          <option value="value1" selected>Broad & Olney</option>
+          <option value="value2">52nd & Market</option>
+          <option value="value3">City Hall</option>
+          <option value="value4">Broad & Snyder</option>
+        </select>
+      </span>
+      <span>
+        <h3 id='filter-head'> Filter by Route:
+          <input id="number-input1" type="text" style = "height: 24px; width: 250px" type="number" placeholder="Enter Route then press 'enter'" value="47" enabled onkeyup="slideDeck[currentSlide].visual()"> </h3>
+        </span>
+        <span>
+          <h3 id='s2-head'> Adjust the Number of Routes Shown: </h3>
+          <input id='s2-slide' type="range" min="1" max="10" value="3" tabindex="0" step="1" onchange="slideDeck[currentSlide].visual()">
+          <input type="text" id="s2-text" value="" width = "50px">
+        </span>
 
-        </div>
-        <div class = "control">
-          <span> <button class="mdl-button mdl-js-button" id="button-backward" onclick="returnSlide()"> Previous </button> </span>
-          <span> <button class="mdl-button mdl-js-button" id="button-forward" onclick="advanceSlide()"> Next </button> </span>
-        </div>
+      </div>
+      <div class = "control">
+        <span> <button class="mdl-button mdl-js-button" id="button-backward" onclick="returnSlide()"> Previous </button> </span>
+        <span> <button class="mdl-button mdl-js-button" id="button-forward" onclick="advanceSlide()"> Next </button> </span>
+      </div>
 
 
 
 
 
-        <div class = "map" id="map"></div>
+      <div class = "map" id="map"></div>
 
 
-        <!-- Javascript Imports Here -->
-        <script src="js/leaflet.js"></script>
-        <script src="js/leaflet.ajax.js"></script>
-        <script src="js/underscore.js"></script>
-        <script src="js/jquery-2.2.0.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
-        <script src="js/main.js"></script>
-      </body>
+      <!-- Javascript Imports Here -->
+      <script src="js/leaflet.js"></script>
+      <script src="js/leaflet.ajax.js"></script>
+      <script src="js/underscore.js"></script>
+      <script src="js/jquery-2.2.0.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
+      <script src="js/main.js"></script>
+    </body>
 
-      </html>
+    </html>
