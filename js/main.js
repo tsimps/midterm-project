@@ -90,7 +90,7 @@ var slide1 = {
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bu stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";
+      "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bus stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";
   },
   debug: function() {
     console.log("0");
@@ -199,16 +199,28 @@ var slide5 = {
     document.getElementById("sidebar-text").innerHTML = "Slide 5";
   },
   visual: function() {
+    input = $("input[id=number-input1]").val();
+
     clearMarkers();
     clearShapes();
+
+    route = input;
+    clearMarkers();
+    clearShapes();
+    makeShape(route).addTo(map);
+    feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
+    //console.log(feats);
+    makeMarkers(feats, 0.75, 'velocity_volatility').addTo(map);
+    map.fitBounds(markers.getBounds());
 
     if (event.keyCode === 13) {
       route = input;
       clearMarkers();
       clearShapes();
       makeShape(route).addTo(map);
-      feats = filterFeatureGroup(data, "routeNumbers", route);
-      makeMarkers(feats, 0.75).addTo(map);
+      feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
+      //console.log(feats);
+      makeMarkers(feats, 0.75, 'velocity_volatility').addTo(map);
       map.fitBounds(markers.getBounds());
     }
   }
@@ -297,7 +309,7 @@ normalize = val => {
 };
 
 // map the stop makers from a json file
-function makeMarkers(dat, opacity = 0.2) {
+function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
   //console.log("JSON", json);
 
   // create layer group of station markers
@@ -306,10 +318,32 @@ function makeMarkers(dat, opacity = 0.2) {
       dat,
       function(feature) {
         //console.log(feature.properties.avg_boards);
+        if (radiusSource === "avg_boards") {
+          radius = normalize(feature.properties[radiusSource]);
+          color = '#4CAF50';
+          //popup =
+        } else {
+          radius = feature.properties.avg_velocity; // size by speed
+
+          // color by volatility
+          if (feature.properties.velocity_volatility > 8) {
+            color = "#ba000d";
+          }
+          else if (feature.properties.velocity_volatility > 6) {
+            color = "#ff7961";
+          }
+          else if (feature.properties.velocity_volatility > 4) {
+            color = "#ffcccb";
+          }
+          else {color = '#80e27e';}
+
+          // popup = (add volatility and speed info)
+        }
+
         var pathOpts = {
           //radius: allStops[i].Ridership * 1.75,
-          radius: normalize(feature.properties.avg_boards),
-          fillColor: "#4CAF50",
+          radius: radius,
+          fillColor: color,
           stroke: false,
           fillOpacity: opacity
         };
@@ -424,9 +458,6 @@ function filterShapes(shape) {
     return feature.geometry.geometries.type != "Point";
   }
 }
-var routePathOpts = {
-  color: '#017c80'
-};
 
 // bring in a kml file, conver to L.geojson
 function makeShape(route) {
@@ -437,8 +468,9 @@ function makeShape(route) {
       },
 
       filter: function(feature) {
-        console.log(feature.geometry.geometries.type); //undefined
-        return feature.geometry.geometries.type != "Point";
+        console.log(feature.geometry.geometries); //undefined
+        feature.geometry.geometries.pop(); // lazy way of ditching the point
+        return feature;
       }
     }
   );

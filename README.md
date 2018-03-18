@@ -14,5 +14,5 @@
 * User input on bus node sizes
 * Map and toggle to showing routes by ridership
 * [DONE] Style the route lines
-* Filter out the point inside the geoJSON line file
+* [DONE] Filter out the point inside the geoJSON line file
 * Fix popup options based on whether showing all stops or filtered by route
