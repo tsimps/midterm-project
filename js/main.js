@@ -51,6 +51,8 @@ var markers;
 var shape;
 var data;
 var stopsRoutesData;
+var routeArray = [];
+
 //$.getJSON(jsonLink1).done(function(data){ makeMarkersJSON(data); });
 //json = $.getJSON(jsonLink1);
 
@@ -96,11 +98,14 @@ var slide1 = {
     console.log("0");
   },
   visual: function() {
+    var input = parseInt(document.getElementById("s1-slide").value);
+    document.getElementById('s1-text').value = input;
+
     clearMarkers();
     clearShapes();
-    resetMap();
+    //resetMap();
     //map.addLayer(baseLayers[1]);
-    feats = filterFeatureGroup(data, "avg_boards", 200);
+    feats = filterFeatureGroup(data, "avg_boards", input);
     makeMarkers(feats).addTo(map);
   }
 };
@@ -155,11 +160,11 @@ var slide4 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "Examining Ridership by Stops on a Route";
+      "Examining Route Ridership";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "This shows the ridership garnered by each stop on a particular route, changable by the user input below.";
+      "This shows the ridership garnered by each stop on a particular route, changable by the user input below. Feel free to explore different routes.";
   },
   visual: function() {
     // get input
@@ -193,10 +198,10 @@ var slide5 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "Examining the Route 47: Congestion";
+      "Examining the Routes of Congestion";
   },
   body: function() {
-    document.getElementById("sidebar-text").innerHTML = "Slide 5";
+    document.getElementById("sidebar-text").innerHTML = "Using R scripts to process hundreds of thousands of bus runs, this shows the average speed of a bus passing through each stop, measured by the time it takes to travel between the shown stop and the next stop (because each bus is time stamped at each stop. Notice the four main situations: (1) Reliably fast (bigger, green marker), (2) reliably slow (small green marker), (3) unpredictable yet fast (bigger, red marker), (4) unpredictable and slow (small red marker). Reliability here is measured by the standard deviation of the velocity of busses at each stop throughout the day.";
   },
   visual: function() {
     input = $("input[id=number-input1]").val();
@@ -229,18 +234,53 @@ var slide5 = {
 var slide6 = {
   slideNumber: 6,
   debug: function() {
-    console.log("5");
+    console.log("6");
   },
   title: function() {
-    document.getElementById("sidebar-header").innerHTML = "Slide 6";
+    document.getElementById("sidebar-header").innerHTML = "The Best Performing Routes";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML = "Slide 6";
   },
-  visual: function() {}
+  visual: function() {
+    var bestRoutes = [60, 54, 59, 6, 79, 66];
+    clearMarkers();
+    clearShapes();
+
+    for (var i = 0; i < bestRoutes.length; i++) {
+      makeShape(bestRoutes[i]).addTo(map);
+      feats = filterFeatureGroup(stopsRoutesData, "ROUTE", bestRoutes[i]);
+      makeMarkers(feats, 0.6).addTo(map);
+    }
+  }
 };
 
-var slideDeck = [slide0, slide1, slide2, slide3, slide4, slide5, slide6];
+var slide7 = {
+  slideNumber: 7,
+  debug: function() {
+    console.log("7");
+  },
+  title: function() {
+    document.getElementById("sidebar-header").innerHTML = "The Worst Perfoming Routes";
+  },
+  body: function() {
+    document.getElementById("sidebar-text").innerHTML = "Slide 7";
+  },
+  visual: function() {
+    var worstRoutes = [35, 77, 27, 88, 80, 37];
+    clearMarkers();
+    clearShapes();
+
+    for (var i = 0; i < worstRoutes.length; i++) {
+      makeShape(worstRoutes[i]).addTo(map);
+      feats = filterFeatureGroup(stopsRoutesData, "ROUTE", worstRoutes[i]);
+      makeMarkers(feats, 0.6).addTo(map);
+    }
+    map.setZoom(11);
+  }
+};
+
+var slideDeck = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
 
 function buttonControl() {
   var y = document.getElementById("button-backward");
@@ -258,10 +298,26 @@ function buttonControl() {
   }
 
   var z = document.getElementById("number-input1");
+  var filterHead = document.getElementById("filter-head");
   if ((currentSlide === 4) | (currentSlide === 5)) {
     z.style.display = "";
+    filterHead.style.display ='';
   } else {
     z.style.display = "none";
+    filterHead.style.display ='none';
+  }
+
+  var s1Head = document.getElementById("s1-head");
+  var s1Slide = document.getElementById("s1-slide");
+  var s1Text = document.getElementById("s1-text");
+  if (currentSlide === 1) {
+    s1Head.style.display = "";
+    s1Slide.style.display = "";
+    s1Text.style.display = "";
+  } else {
+    s1Head.style.display = "none";
+    s1Slide.style.display = "none";
+    s1Text.style.display = "none";
   }
 }
 
@@ -307,7 +363,7 @@ normalize = val => {
   }
   return x;
 };
-
+var markerArray = [];
 // map the stop makers from a json file
 function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
   //console.log("JSON", json);
@@ -322,8 +378,13 @@ function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
           radius = normalize(feature.properties[radiusSource]);
           color = '#4CAF50';
           //popup =
-        } else {
-          radius = feature.properties.avg_velocity; // size by speed
+        }
+
+        if (radiusSource === "velocity_volatility") {
+          var velo = feature.properties.avg_velocity; // size by speed
+          //radius = -Math.log(velo)+10;
+          //radius = velo / (feature.properties.velocity_volatility / 3);
+          radius = velo;
 
           // color by volatility
           if (feature.properties.velocity_volatility > 8) {
@@ -366,6 +427,7 @@ function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
       } // close _.map()
     )
   );
+  markerArray.push(markers);
   return markers;
 }
 
@@ -412,12 +474,14 @@ function filterFeatureGroup(dat, field, value) {
 
 function clearMarkers() {
   if (markers != null) {
-    markers.removeFrom(map);
+    //markers.removeFrom(map);
+    _.each(markerArray, function(feature){feature.removeFrom(map);});
   }
 }
 function clearShapes() {
   if (shape != null) {
     shape.removeFrom(map);
+    _.each(routeArray, function(feature){feature.removeFrom(map);});
   }
 }
 
@@ -444,20 +508,6 @@ function switchToTransport() {
   map.removeLayer(CartoDB_Positron);
 }
 
-//shape.getLayers()[0].feature.geometry.geometries.pop()
-function filterShapes(shape) {
-  //this.shape.getLayers()[0].feature.geometry.geometries.pop();
-  //return shape;
-
-  feature = this.shape.getLayers()[0].feature;
-  //console.log('FEATURE ', feature);
-
-  for (var i = 0; i < feature.geometry.geometries.length; i++) {
-    console.log("a");
-    console.log(feature.geometry.geometries[i].type);
-    return feature.geometry.geometries.type != "Point";
-  }
-}
 
 // bring in a kml file, conver to L.geojson
 function makeShape(route) {
@@ -468,7 +518,7 @@ function makeShape(route) {
       },
 
       filter: function(feature) {
-        console.log(feature.geometry.geometries); //undefined
+        //console.log(feature.geometry.geometries); //undefined
         feature.geometry.geometries.pop(); // lazy way of ditching the point
         return feature;
       }
@@ -482,6 +532,7 @@ function makeShape(route) {
   );
 
   shape = routeShapeLayer;
+  routeArray.push(routeShapeLayer);
   return routeShapeLayer;
 }
 

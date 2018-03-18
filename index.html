@@ -1,54 +1,64 @@
 <!doctype html>
 
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Midterm Project</title>
+<head>
+  <meta charset="utf-8">
+  <title>Midterm Project</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class = "header">
-      <h1> A Story of Philadelphia Bus Data </h1>
-    </div>
-
-
-    <div class = "sidebar">
-      <h2 id="sidebar-header"> Philadelphia Bus Ridership: A Visual Story </h2>
-      <p id="sidebar-text"> This project walks through a visualization of various bus ridership data.
-        As you see on the map, Philadelphia has a lot of bus stops and a lot of
-        bus riders (182 million annual unlinked trips). Data for this project is
-        sourced from SEPTA, Automated Passenger Count (APC). These devices sample
-        every run on every bus route each season. This uses data from each 2014-2017
-        Spring sampling. Data processing was completed in R with help from the
-        beautiful DPLYR package. </p>
-        <p><input id="number-input1" type="text" style = "height: 24px;
-      width: 250px" type="number" placeholder="Enter Route then press 'enter'" value="47" enabled onkeyup="slideDeck[currentSlide].visual()"> </p>
-
-    </div>
-    <div class = "control">
-      <span> <button class="mdl-button mdl-js-button" id="button-backward" onclick="returnSlide()"> Previous </button> </span>
-      <span> <button class="mdl-button mdl-js-button" id="button-forward" onclick="advanceSlide()"> Next </button> </span>
-    </div>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class = "header">
+    <h1> A Story of Philadelphia Bus Data </h1>
+  </div>
 
 
+  <div class = "sidebar">
+    <h2 id="sidebar-header"> Philadelphia Bus Ridership: A Visual Story </h2>
+    <p id="sidebar-text"> This project walks through a visualization of various bus ridership data.
+      As you see on the map, Philadelphia has a lot of bus stops and a lot of
+      bus riders (182 million annual unlinked trips). Data for this project is
+      sourced from SEPTA, Automated Passenger Count (APC). These devices sample
+      every run on every bus route each season. This uses data from each 2014-2017
+      Spring sampling. Data processing was completed in R with help from the
+      beautiful DPLYR package. </p>
+
+
+        <!-- <p><input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="750" value="200" tabindex="0" step="25" onchange="slideDeck[currentSlide].visual()"></p> -->
+          <span>
+            <h3 id='s1-head'> Filter by Average Daily Boards: </h3>
+            <input id='s1-slide' type="range" min="0" max="1500" value="200" tabindex="0" step="25" onchange="slideDeck[currentSlide].visual()">
+            <input type="text" id="s1-text" value="" width = "50px">
+          </span>
+          <span>
+            <h3 id='filter-head'> Filter by Route:
+            <input id="number-input1" type="text" style = "height: 24px; width: 250px" type="number" placeholder="Enter Route then press 'enter'" value="47" enabled onkeyup="slideDeck[currentSlide].visual()"> </h3>
+          </span>
+
+        </div>
+        <div class = "control">
+          <span> <button class="mdl-button mdl-js-button" id="button-backward" onclick="returnSlide()"> Previous </button> </span>
+          <span> <button class="mdl-button mdl-js-button" id="button-forward" onclick="advanceSlide()"> Next </button> </span>
+        </div>
 
 
 
-    <div class = "map" id="map"></div>
 
 
-    <!-- Javascript Imports Here -->
-    <script src="js/leaflet.js"></script>
-    <script src="js/leaflet.ajax.js"></script>
-    <script src="js/underscore.js"></script>
-    <script src="js/jquery-2.2.0.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+        <div class = "map" id="map"></div>
 
-</html>
+
+        <!-- Javascript Imports Here -->
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.ajax.js"></script>
+        <script src="js/underscore.js"></script>
+        <script src="js/jquery-2.2.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
+        <script src="js/main.js"></script>
+      </body>
+
+      </html>
