@@ -1,19 +1,24 @@
 # midterm-project
 
 ## TO DO
-* Fill out paragraph sections for each slide
-* Handle the odd routes like the G, R, etc. (probably needs to be done in R)
+* !! Handle the odd routes like the G, R, etc. (probably needs to be done in R) !!
+* !! Fix popup options based on whether showing all stops or filtered by route !!
+* !! Rebuild slide 3 to showcase a particular neighborhood. Would be great to allow user input
+but basic functionality will suffice for the midterm !!
+  * Should be using total ridership data at each stop and also choosing routes (will need to search the routeNumbers field)
+  * Add neighborhood boundaries and select the germantown for visual priority
+  * Stretch: allow user to choose a neighborhood and automatically populate the routes and stops
+* !! Write a congestion rating formula that considers the avg speed and the
+  volatility to produce a congestion score !!
+
+* Add popups across platform to aid user comprehension
 * Color stops on the route slides by direction
   * Idea: write a pathOpts function outside of makeMarkers() that is called within
-* Map and toggle to showing routes by ridership (may save for final)
-* !! Fix popup options based on whether showing all stops or filtered by route !!
 * Integrate material design library with everything
-* Write a congestion rating formula that considers the avg speed and the volatility to produce a congestion score
-* Add popups across platform to aid user comprehension
-* Add an opening card
 * Add some feature to slide 2 to make it more informative
   * show routes that shop at the stop selected?
-* Rebuild slide 3
+  * Add paragraph
+
 
 ## TO DONE
 * [DONE] Hide/show buttons and user input
@@ -35,3 +40,5 @@
 * Integrate Chart.js features to display statics on stops/routes
 * Find the markers currently in view, show the routes for those stops dynamically
 * Allow the user to select routes and do something
+* Add trolley ridership and MFL/BSL ridership and Data
+* Show routes with line-weight by ridership/load
