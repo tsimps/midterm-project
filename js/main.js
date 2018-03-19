@@ -3,7 +3,7 @@ var CartoDB_Positron = L.tileLayer(
   "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
   {
     attribution:
-    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     subdomains: "abcd",
     maxZoom: 19
   }
@@ -21,7 +21,7 @@ var Thunderforest_Transport = L.tileLayer(
   "https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=39079820db6845f79a313d7d4724e1a9",
   {
     attribution:
-    '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     apikey: "39079820db6845f79a313d7d4724e1a9",
     maxZoom: 22
   }
@@ -46,7 +46,7 @@ L.control.layers(baseLayers).addTo(map);
 
 var currentSlide = 0;
 var jsonLink1 =
-"https://raw.githubusercontent.com/tsimps/tsimps.github.io/master/data/shelter_json_31318.geojson";
+  "https://raw.githubusercontent.com/tsimps/tsimps.github.io/master/data/shelter_json_31318.geojson";
 var markers;
 var shape;
 var data;
@@ -68,11 +68,11 @@ var slide0 = {
   slideNumber: 0,
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-    "Philadelphia Bus Ridership: A Visual Story";
+      "Philadelphia Bus Ridership: A Visual Story";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-    "This project walks through a visualization of various bus ridership data. As you see on the map, Philadelphia has a lot of bus stops and a lot of bus riders (182 million annual unlinked trips). Data for this project is sourced from SEPTA, Automated Passenger Count (APC). These devices sample every run on every bus route each season. This uses data from each 2014-2017 Spring sampling. Data processing was completed in R with help from the beautiful DPLYR package.";
+      "This project walks through a visualization of various bus ridership data. As you see on the map, Philadelphia has a lot of bus stops and a lot of bus riders (182 million annual unlinked trips). Data for this project is sourced from SEPTA, Automated Passenger Count (APC). These devices sample every run on every bus route each season. This uses data from each 2014-2017 Spring sampling. Data processing was completed in R with help from the beautiful DPLYR package.";
   },
   debug: function() {
     console.log("0");
@@ -93,18 +93,18 @@ var slide1 = {
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-    "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bus stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";
+      "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bus stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";
   },
   debug: function() {
     console.log("0");
   },
   visual: function() {
     var input = parseInt(document.getElementById("s1-slide").value);
-    document.getElementById('s1-text').value = input;
+    document.getElementById("s1-text").value = input;
 
     clearMarkers();
     clearShapes();
-    //resetMap();
+    resetMap();
     //map.addLayer(baseLayers[1]);
     feats = filterFeatureGroup(data, "avg_boards", input);
     makeMarkers(feats).addTo(map);
@@ -116,7 +116,7 @@ var slide2 = {
   slideNumber: 2,
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-    "Major Bus Nodes: A Closer Look";
+      "Major Bus Nodes: A Closer Look";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML = "Slide 2";
@@ -126,22 +126,22 @@ var slide2 = {
   },
   visual: function() {
     input = document.getElementById("select-1").value;
-    console.log('input:', input);
+    //console.log("input:", input);
     switchToAerial();
     clearMarkers();
     clearShapes();
     makeMarkers(data, 0.75).addTo(map);
 
-    if(input == 'value1') {
+    if (input == "value1") {
       map.setView([40.038833582357064, -75.14461964710792], 18);
     }
-    if(input == 'value2') {
+    if (input == "value2") {
       map.setView([39.959970794994184, -75.2248701248027], 18);
     }
-    if(input == 'value3') {
+    if (input == "value3") {
       map.setView([39.952669439501975, -75.16390199107265], 18);
     }
-    if(input == 'value4') {
+    if (input == "value4") {
       map.setView([39.92445342234856, -75.16953545116849], 18);
     }
   }
@@ -154,7 +154,7 @@ var slide3 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-    "A Closer Look: Broad & Olney";
+      "A Closer Look: Broad & Olney";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML = "This shows...";
@@ -166,7 +166,6 @@ var slide3 = {
     switchToAerial();
     makeMarkers(data, 0.75).addTo(map);
     switchToTransport();
-
   }
 };
 
@@ -177,11 +176,11 @@ var slide4 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-    "Examining Route Ridership";
+      "Examining Route Ridership";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-    "This shows the ridership garnered by each stop on a particular route, changable by the user input below. Feel free to explore different routes.";
+      "This shows the ridership garnered by each stop on a particular route, changable by the user input below. Feel free to explore different routes.";
   },
   visual: function() {
     // get input
@@ -215,10 +214,11 @@ var slide5 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-    "Examining the Routes of Congestion";
+      "Examining the Routes of Congestion";
   },
   body: function() {
-    document.getElementById("sidebar-text").innerHTML = "Using R scripts to process hundreds of thousands of bus runs, this shows the average speed of a bus passing through each stop, measured by the time it takes to travel between the shown stop and the next stop (because each bus is time stamped at each stop. Notice the four main situations: (1) Reliably fast (bigger, green marker), (2) reliably slow (small green marker), (3) unpredictable yet fast (bigger, red marker), (4) unpredictable and slow (small red marker). Reliability here is measured by the standard deviation of the velocity of busses at each stop throughout the day.";
+    document.getElementById("sidebar-text").innerHTML =
+      "Using R scripts to process hundreds of thousands of bus runs, this shows the average speed of a bus passing through each stop, measured by the time it takes to travel between the shown stop and the next stop (because each bus is time stamped at each stop. Notice the four main situations: (1) Reliably fast (bigger, green marker), (2) reliably slow (small green marker), (3) unpredictable yet fast (bigger, red marker), (4) unpredictable and slow (small red marker). Reliability here is measured by the standard deviation of the velocity of busses at each stop throughout the day.";
   },
   visual: function() {
     input = $("input[id=number-input1]").val();
@@ -232,7 +232,7 @@ var slide5 = {
     makeShape(route).addTo(map);
     feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
     //console.log(feats);
-    makeMarkers(feats, 0.75, 'velocity_volatility').addTo(map);
+    makeMarkers(feats, 0.75, "velocity_volatility").addTo(map);
     map.fitBounds(markers.getBounds());
 
     if (event.keyCode === 13) {
@@ -242,7 +242,7 @@ var slide5 = {
       makeShape(route).addTo(map);
       feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
       //console.log(feats);
-      makeMarkers(feats, 0.75, 'velocity_volatility').addTo(map);
+      makeMarkers(feats, 0.75, "velocity_volatility").addTo(map);
       map.fitBounds(markers.getBounds());
     }
   }
@@ -254,14 +254,16 @@ var slide6 = {
     console.log("6");
   },
   title: function() {
-    document.getElementById("sidebar-header").innerHTML = "The Best Performing Routes";
+    document.getElementById("sidebar-header").innerHTML =
+      "The Best Performing Routes";
   },
   body: function() {
-    document.getElementById("sidebar-text").innerHTML = "Slide 6";
+    document.getElementById("sidebar-text").innerHTML =
+      "The best performing routes, measured by operating ration (the level to which revenues cover expenses), almost all follow the same narrative. 8 out of 10 of these routes feed the two major rail lines. The two highest performing routes, the 60 and the 54, serve both! The two outliers, the 17 and the 33, essentially mirror each other a North-South trunk routes parrelel to the Broad Street Line. These two are high performing, despite competition from the Route 2. They are also a great visual representation of the need for spacing between heavy rail and bus. While a few more blocks of space would be good, 5 blocks is a minimum. These routes could also benefit by circling at City Hall and letting riders use the MFL to continue to Old City.";
   },
   visual: function() {
     var input = parseInt(document.getElementById("s2-slide").value);
-    document.getElementById('s2-text').value = input;
+    document.getElementById("s2-text").value = input;
 
     var bestRoutes = [60, 54, 59, 6, 79, 66, 56, 33, 17, 46];
     clearMarkers();
@@ -281,14 +283,16 @@ var slide7 = {
     console.log("7");
   },
   title: function() {
-    document.getElementById("sidebar-header").innerHTML = "The Worst Perfoming Routes";
+    document.getElementById("sidebar-header").innerHTML =
+      "The Worst Perfoming Routes";
   },
   body: function() {
-    document.getElementById("sidebar-text").innerHTML = "Slide 7";
+    document.getElementById("sidebar-text").innerHTML =
+      "These poorly performing routes also share the same basically qualities, namely: disorder. The rouets meander across city blocks with little rhyme or reason. The worst route, the 35, runs in a circle through the Northwest. While many of these routes run into suburban counties and therefore do not have ridershiop shown at these stops, it is clear that they are largely circituitous routes that often don't go anywhere. Route 2 is shown here running parrelel and just blocks from the BSL and the Route 17, providing competing and poorly performing service. Perhaps most interesting is the 61. Running down Ridge Avenue and criss crossing the grid, it competes with myriad other services while being significantly slowed down by the diagonal route conflicts.";
   },
   visual: function() {
     var input = parseInt(document.getElementById("s2-slide").value);
-    document.getElementById('s2-text').value = input;
+    document.getElementById("s2-text").value = input;
 
     var worstRoutes = [35, 77, 27, 88, 80, 37, 61, 2, 44, 38];
     clearMarkers();
@@ -303,7 +307,16 @@ var slide7 = {
   }
 };
 
-var slideDeck = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
+var slideDeck = [
+  slide0,
+  slide1,
+  slide2,
+  slide3,
+  slide4,
+  slide5,
+  slide6,
+  slide7
+];
 
 function buttonControl() {
   var y = document.getElementById("button-backward");
@@ -324,10 +337,10 @@ function buttonControl() {
   var filterHead = document.getElementById("filter-head");
   if ((currentSlide === 4) | (currentSlide === 5)) {
     z.style.display = "";
-    filterHead.style.display ='';
+    filterHead.style.display = "";
   } else {
     z.style.display = "none";
-    filterHead.style.display ='none';
+    filterHead.style.display = "none";
   }
 
   var s1Head = document.getElementById("s1-head");
@@ -346,7 +359,7 @@ function buttonControl() {
   var s2Head = document.getElementById("s2-head");
   var s2Slide = document.getElementById("s2-slide");
   var s2Text = document.getElementById("s2-text");
-  if ((currentSlide === 6) | currentSlide === 7) {
+  if ((currentSlide === 6) | (currentSlide === 7)) {
     s2Head.style.display = "";
     s2Slide.style.display = "";
     s2Text.style.display = "";
@@ -358,7 +371,7 @@ function buttonControl() {
 
   var selectHead = document.getElementById("select-1-head");
   var selector = document.getElementById("select-1");
-  if ((currentSlide === 2)) {
+  if (currentSlide === 2) {
     selectHead.style.display = "";
     selector.style.display = "";
   } else {
@@ -423,7 +436,7 @@ function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
         //console.log(feature.properties.avg_boards);
         if (radiusSource === "avg_boards") {
           radius = normalize(feature.properties[radiusSource]);
-          color = '#4CAF50';
+          color = "#4CAF50";
           //popup =
         }
 
@@ -436,14 +449,13 @@ function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
           // color by volatility
           if (feature.properties.velocity_volatility > 8) {
             color = "#ba000d";
-          }
-          else if (feature.properties.velocity_volatility > 6) {
+          } else if (feature.properties.velocity_volatility > 6) {
             color = "#ff7961";
-          }
-          else if (feature.properties.velocity_volatility > 4) {
+          } else if (feature.properties.velocity_volatility > 4) {
             color = "#ffcccb";
+          } else {
+            color = "#80e27e";
           }
-          else {color = '#80e27e';}
 
           // popup = (add volatility and speed info)
         }
@@ -461,15 +473,15 @@ function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
           pathOpts
         ).bindPopup(
           "<b> Stop ID: </b>" +
-          feature.properties.Stopid +
-          "<br><b>Stop Name: </b>" +
-          feature.properties.Stop_Name +
-          "<br><b>Spring '14-'17 Average Boardings Per Day: </b>" +
-          Math.round(feature.properties.avg_boards) +
-          "<br><b>Direction: </b>" +
-          feature.properties.Direction +
-          "<br><b>Routes that Stop Here: </b>" +
-          feature.properties.routeNumbers
+            feature.properties.Stopid +
+            "<br><b>Stop Name: </b>" +
+            feature.properties.Stop_Name +
+            "<br><b>Spring '14-'17 Average Boardings Per Day: </b>" +
+            Math.round(feature.properties.avg_boards) +
+            "<br><b>Direction: </b>" +
+            feature.properties.Direction +
+            "<br><b>Routes that Stop Here: </b>" +
+            feature.properties.routeNumbers
         );
       } // close _.map()
     )
@@ -522,13 +534,17 @@ function filterFeatureGroup(dat, field, value) {
 function clearMarkers() {
   if (markers != null) {
     //markers.removeFrom(map);
-    _.each(markerArray, function(feature){feature.removeFrom(map);});
+    _.each(markerArray, function(feature) {
+      feature.removeFrom(map);
+    });
   }
 }
 function clearShapes() {
   if (shape != null) {
     shape.removeFrom(map);
-    _.each(routeArray, function(feature){feature.removeFrom(map);});
+    _.each(routeArray, function(feature) {
+      feature.removeFrom(map);
+    });
   }
 }
 
@@ -555,13 +571,12 @@ function switchToTransport() {
   map.removeLayer(CartoDB_Positron);
 }
 
-
 // bring in a kml file, conver to L.geojson
 function makeShape(route) {
   var customLayer = L.geoJson(null, {
     // http://leafletjs.com/reference.html#geojson-style
     style: function(feature) {
-      return { color: '#017c80' };
+      return { color: "#017c80" };
     },
 
     filter: function(feature) {
@@ -569,18 +584,19 @@ function makeShape(route) {
       feature.geometry.geometries.pop(); // lazy way of ditching the point
       return feature;
     }
-  }
-);
+  });
 
-var routeShapeLayer = omnivore.kml(
-  "https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/" + route + ".kml",
-  null,
-  customLayer
-);
+  var routeShapeLayer = omnivore.kml(
+    "https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/" +
+      route +
+      ".kml",
+    null,
+    customLayer
+  );
 
-shape = routeShapeLayer;
-routeArray.push(routeShapeLayer);
-return routeShapeLayer;
+  shape = routeShapeLayer;
+  routeArray.push(routeShapeLayer);
+  return routeShapeLayer;
 }
 
 var subwayRouteArray = [];
@@ -589,43 +605,47 @@ function makeMFL(opc = 1) {
   var mflSyle = L.geoJson(null, {
     // http://leafletjs.com/reference.html#geojson-style
     style: function(feature) {
-      return { color: '#F74BF', fillOpacity: opc };
-    },
-  }
-);
-var mfl = omnivore.kml(
-  "https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/" + 'MFL' + ".kml"
-);
-subwayRouteArray.push(mfl);
-return mfl;
+      return { color: "#F74BF", fillOpacity: opc };
+    }
+  });
+  var mfl = omnivore.kml(
+    "https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/" +
+      "MFL" +
+      ".kml"
+  );
+  subwayRouteArray.push(mfl);
+  return mfl;
 }
 
 function makeBSL(opc = 1) {
   var bslSyle = L.geoJson(null, {
     // http://leafletjs.com/reference.html#geojson-style
     style: function(feature) {
-      return { color: '#FF970F', fillOpacity: opc, opacity: opc};
-    },
-  }
-);
-var bsl = omnivore.kml(
-  "https://raw.githubusercontent.com/RajatBhageria/Real-Time-Septa/master/bsl.kml",
-  null,
-  bslSyle
-);
-subwayRouteArray.push(bsl);
-return bsl;
+      return { color: "#FF970F", fillOpacity: opc, opacity: opc };
+    }
+  });
+  var bsl = omnivore.kml(
+    "https://raw.githubusercontent.com/RajatBhageria/Real-Time-Septa/master/bsl.kml",
+    null,
+    bslSyle
+  );
+  subwayRouteArray.push(bsl);
+  return bsl;
 }
 
 function mapSubways(opacity) {
   makeMFL(opacity);
   makeBSL(opacity);
-  _.each(subwayRouteArray, function(feature){feature.addTo(map);});
+  _.each(subwayRouteArray, function(feature) {
+    feature.addTo(map);
+  });
 }
 
 function clearSubways() {
   if (subwayRouteArray.length > null) {
-    _.each(subwayRouteArray, function(feature){feature.removeFrom(map);});
+    _.each(subwayRouteArray, function(feature) {
+      feature.removeFrom(map);
+    });
   }
 }
 
