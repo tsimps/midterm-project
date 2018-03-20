@@ -3,7 +3,7 @@ var CartoDB_Positron = L.tileLayer(
   "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
   {
     attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     subdomains: "abcd",
     maxZoom: 19
   }
@@ -21,7 +21,7 @@ var Thunderforest_Transport = L.tileLayer(
   "https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=39079820db6845f79a313d7d4724e1a9",
   {
     attribution:
-      '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     apikey: "39079820db6845f79a313d7d4724e1a9",
     maxZoom: 22
   }
@@ -46,11 +46,12 @@ L.control.layers(baseLayers).addTo(map);
 
 var currentSlide = 0;
 var jsonLink1 =
-  "https://raw.githubusercontent.com/tsimps/tsimps.github.io/master/data/shelter_json_31318.geojson";
+"https://raw.githubusercontent.com/tsimps/tsimps.github.io/master/data/shelter_json_31318.geojson";
 var markers;
 var shape;
 var data;
 var stopsRoutesData;
+var neighborhoods;
 var routeArray = [];
 
 //$.getJSON(jsonLink1).done(function(data){ makeMarkersJSON(data); });
@@ -68,11 +69,11 @@ var slide0 = {
   slideNumber: 0,
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "Philadelphia Bus Ridership: A Visual Story";
+    "Philadelphia Bus Ridership: A Visual Story";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "This project walks through a visualization of various bus ridership data. As you see on the map, Philadelphia has a lot of bus stops and a lot of bus riders (182 million annual unlinked trips). Data for this project is sourced from SEPTA, Automated Passenger Count (APC). These devices sample every run on every bus route each season. This uses data from each 2014-2017 Spring sampling. Data processing was completed in R with help from the beautiful DPLYR package.";
+    "This project walks through a visualization of various bus ridership data. As you see on the map, Philadelphia has a lot of bus stops and a lot of bus riders (182 million annual unlinked trips). Data for this project is sourced from SEPTA, Automated Passenger Count (APC). These devices sample every run on every bus route each season. This uses data from each 2014-2017 Spring sampling. Data processing was completed in R with help from the beautiful DPLYR package.";
   },
   debug: function() {
     console.log("0");
@@ -93,7 +94,7 @@ var slide1 = {
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bus stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";
+    "Philadelphia has a variety of major hubs of bus activity. As you can see in this map, which shows bus stops that average more than 200 daily boardings, these are largely congregated around subway connections but also exist throughout neighborhoods.";
   },
   debug: function() {
     console.log("0");
@@ -116,7 +117,7 @@ var slide2 = {
   slideNumber: 2,
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "Major Bus Nodes: A Closer Look";
+    "Major Bus Nodes: A Closer Look";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML = "Slide 2";
@@ -130,6 +131,7 @@ var slide2 = {
     switchToAerial();
     clearMarkers();
     clearShapes();
+    clearNeighorhoods();
     makeMarkers(data, 0.75).addTo(map);
 
     if (input == "value1") {
@@ -154,18 +156,28 @@ var slide3 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "A Closer Look: Broad & Olney";
+    "A Closer Look: Busses in the Germantown Neighborhood";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML = "This shows...";
   },
   visual: function() {
+    var germantownRoutes = [18, 23, 26, 53, 65, 704, 706, 707, 801, 802];
     clearMarkers();
     clearShapes();
-    map.setView([40.038833582357064, -75.14461964710792], 18);
-    switchToAerial();
-    makeMarkers(data, 0.75).addTo(map);
-    switchToTransport();
+    switchToLite();
+    //map.setZoom(14);
+    map.setView([40.03770816512223, -75.17399311065675], 14);
+    resetMap();
+    neighborhoods.addTo(map);
+
+    for (var i = 0; i < germantownRoutes.length; i++) {
+      makeShape(germantownRoutes[i]).addTo(map);
+      feats = filterFeatureGroup(stopsRoutesData, "ROUTE", germantownRoutes[i]);
+      makeMarkers(feats, 0.6).addTo(map);
+    }
+
+    //map.fitBounds(markers.getBounds());
   }
 };
 
@@ -176,11 +188,11 @@ var slide4 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "Examining Route Ridership";
+    "Examining Route Ridership";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "This shows the ridership garnered by each stop on a particular route, changable by the user input below. Feel free to explore different routes.";
+    "This shows the ridership garnered by each stop on a particular route, changable by the user input below. Feel free to explore different routes.";
   },
   visual: function() {
     // get input
@@ -190,6 +202,7 @@ var slide4 = {
     route = input;
     clearMarkers();
     clearShapes();
+    clearNeighorhoods();
     makeShape(route).addTo(map);
     feats = filterFeatureGroup(stopsRoutesData, "ROUTE", route);
     makeMarkers(feats, 0.75).addTo(map);
@@ -214,11 +227,11 @@ var slide5 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "Examining the Routes of Congestion";
+    "Examining the Routes of Congestion";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "Using R scripts to process hundreds of thousands of bus runs, this shows the average speed of a bus passing through each stop, measured by the time it takes to travel between the shown stop and the next stop (because each bus is time stamped at each stop. Notice the four main situations: (1) Reliably fast (bigger, green marker), (2) reliably slow (small green marker), (3) unpredictable yet fast (bigger, red marker), (4) unpredictable and slow (small red marker). Reliability here is measured by the standard deviation of the velocity of busses at each stop throughout the day.";
+    "Using R scripts to process hundreds of thousands of bus runs, this shows the average speed of a bus passing through each stop, measured by the time it takes to travel between the shown stop and the next stop (because each bus is time stamped at each stop. Notice the four main situations: (1) Reliably fast (bigger, green marker), (2) reliably slow (small green marker), (3) unpredictable yet fast (bigger, red marker), (4) unpredictable and slow (small red marker). Reliability here is measured by the standard deviation of the velocity of busses at each stop throughout the day.";
   },
   visual: function() {
     input = $("input[id=number-input1]").val();
@@ -255,11 +268,11 @@ var slide6 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "The Best Performing Routes";
+    "The Best Performing Routes";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "The best performing routes, measured by operating ration (the level to which revenues cover expenses), almost all follow the same narrative. 8 out of 10 of these routes feed the two major rail lines. The two highest performing routes, the 60 and the 54, serve both! The two outliers, the 17 and the 33, essentially mirror each other a North-South trunk routes parrelel to the Broad Street Line. These two are high performing, despite competition from the Route 2. They are also a great visual representation of the need for spacing between heavy rail and bus. While a few more blocks of space would be good, 5 blocks is a minimum. These routes could also benefit by circling at City Hall and letting riders use the MFL to continue to Old City.";
+    "The best performing routes, measured by operating ration (the level to which revenues cover expenses), almost all follow the same narrative. 8 out of 10 of these routes feed the two major rail lines. The two highest performing routes, the 60 and the 54, serve both! The two outliers, the 17 and the 33, essentially mirror each other a North-South trunk routes parrelel to the Broad Street Line. These two are high performing, despite competition from the Route 2. They are also a great visual representation of the need for spacing between heavy rail and bus. While a few more blocks of space would be good, 5 blocks is a minimum. These routes could also benefit by circling at City Hall and letting riders use the MFL to continue to Old City.";
   },
   visual: function() {
     var input = parseInt(document.getElementById("s2-slide").value);
@@ -284,11 +297,11 @@ var slide7 = {
   },
   title: function() {
     document.getElementById("sidebar-header").innerHTML =
-      "The Worst Perfoming Routes";
+    "The Worst Perfoming Routes";
   },
   body: function() {
     document.getElementById("sidebar-text").innerHTML =
-      "These poorly performing routes also share the same basically qualities, namely: disorder. The rouets meander across city blocks with little rhyme or reason. The worst route, the 35, runs in a circle through the Northwest. While many of these routes run into suburban counties and therefore do not have ridershiop shown at these stops, it is clear that they are largely circituitous routes that often don't go anywhere. Route 2 is shown here running parrelel and just blocks from the BSL and the Route 17, providing competing and poorly performing service. Perhaps most interesting is the 61. Running down Ridge Avenue and criss crossing the grid, it competes with myriad other services while being significantly slowed down by the diagonal route conflicts.";
+    "These poorly performing routes also share the same basically qualities, namely: disorder. The rouets meander across city blocks with little rhyme or reason. The worst route, the 35, runs in a circle through the Northwest. While many of these routes run into suburban counties and therefore do not have ridershiop shown at these stops, it is clear that they are largely circituitous routes that often don't go anywhere. Route 2 is shown here running parrelel and just blocks from the BSL and the Route 17, providing competing and poorly performing service. Perhaps most interesting is the 61. Running down Ridge Avenue and criss crossing the grid, it competes with myriad other services while being significantly slowed down by the diagonal route conflicts.";
   },
   visual: function() {
     var input = parseInt(document.getElementById("s2-slide").value);
@@ -473,15 +486,15 @@ function makeMarkers(dat, opacity = 0.2, radiusSource = "avg_boards") {
           pathOpts
         ).bindPopup(
           "<b> Stop ID: </b>" +
-            feature.properties.Stopid +
-            "<br><b>Stop Name: </b>" +
-            feature.properties.Stop_Name +
-            "<br><b>Spring '14-'17 Average Boardings Per Day: </b>" +
-            Math.round(feature.properties.avg_boards) +
-            "<br><b>Direction: </b>" +
-            feature.properties.Direction +
-            "<br><b>Routes that Stop Here: </b>" +
-            feature.properties.routeNumbers
+          feature.properties.Stopid +
+          "<br><b>Stop Name: </b>" +
+          feature.properties.Stop_Name +
+          "<br><b>Spring '14-'17 Average Boardings Per Day: </b>" +
+          Math.round(feature.properties.avg_boards) +
+          "<br><b>Direction: </b>" +
+          feature.properties.Direction +
+          "<br><b>Routes that Stop Here: </b>" +
+          feature.properties.routeNumbers
         );
       } // close _.map()
     )
@@ -571,6 +584,12 @@ function switchToTransport() {
   map.removeLayer(CartoDB_Positron);
 }
 
+function clearNeighorhoods() {
+  if (neighborhoods != null) {
+    neighborhoods.removeFrom(map);
+  }
+}
+
 // bring in a kml file, conver to L.geojson
 function makeShape(route) {
   var customLayer = L.geoJson(null, {
@@ -588,11 +607,11 @@ function makeShape(route) {
 
   var routeShapeLayer = omnivore.kml(
     "https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/" +
-      route +
-      ".kml",
+    route +
+    ".kml",
     null,
     customLayer
-  );
+  ).bindTooltip('Route ' + route);
 
   shape = routeShapeLayer;
   routeArray.push(routeShapeLayer);
@@ -610,9 +629,10 @@ function makeMFL(opc = 1) {
   });
   var mfl = omnivore.kml(
     "https://raw.githubusercontent.com/tsimps/midterm-project/master/KMLs/" +
-      "MFL" +
-      ".kml"
+    "MFL" +
+    ".kml"
   );
+  //mfl.bindTooltip("my tooltip text").openTooltip();
   subwayRouteArray.push(mfl);
   return mfl;
 }
@@ -649,6 +669,22 @@ function clearSubways() {
   }
 }
 
+function mapNeighborhood(hood) {
+  return L.polygon(hood.geometry.coordinates); // coordinates are flipped
+}
+
+// takes in an array of neighborhood objects and returns a map of them, with the "emphasis" being visually prominant
+function mapNeighborhoods(neighborhoodData) {
+  var neighborhoodCollection = L.featureGroup();
+
+  _.each(neighborhoodData, function(feature) {
+    console.log(feature);
+    neighborhoodCollection.addLayer(mapNeighborhood(feature));
+  });
+
+  return neighborhoodCollection;
+}
+
 $(document).ready(function() {
   buttonControl();
   $.getJSON(jsonLink1).done(function(json) {
@@ -661,7 +697,22 @@ $(document).ready(function() {
   ).done(function(json) {
     stopsRoutesData = json.features;
   });
+  $.getJSON('https://raw.githubusercontent.com/tsimps/midterm-project/master/data/neighborhoods.geojson')
+  .done(function(json){
+    var customLayer = L.geoJson(null, {
+      style: function(feature) {
+        return {fill: true, opacity: 0.25, color: 'red'};
+      },
+      filter: function(feature) {
+        return feature.properties.NAME.includes("GERMANTOWN");//feature.properties.name == "GERMANTOWN";
+      }
+    });
+
+    neighborhoods = omnivore.geojson('https://raw.githubusercontent.com/tsimps/midterm-project/master/data/neighborhoods.geojson', null, customLayer);
+  });
 });
+
+//https://raw.githubusercontent.com/tsimps/midterm-project/master/data/neighborhoods.geojson
 
 // could be used to dynamically size markers by zoom
 // this is complicated by the fact that the markers object is a layer group made
