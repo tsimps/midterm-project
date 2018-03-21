@@ -3,10 +3,11 @@
 ## TO DO
 * !! Handle the odd routes like the G, R, etc. (probably needs to be done in R) !!
 * !! Fix popup options based on whether showing all stops or filtered by route !!
-* !! Rebuild slide 3 to showcase a particular neighborhood. Would be great to allow user input
+* [partial]!! Rebuild slide 3 to showcase a particular neighborhood. Would be great to allow user input
 but basic functionality will suffice for the midterm !!
   * Should be using total ridership data at each stop and also choosing routes (will need to search the routeNumbers field)
-  * Add neighborhood boundaries and select the germantown for visual priority
+  * [DONE] Add neighborhood boundaries and select the germantown for visual priority
+  * Find all of the routes that are in the neighborhood then allow user to toggle which ones to show
   * Stretch: allow user to choose a neighborhood and automatically populate the routes and stops
 * !! Write a congestion rating formula that considers the avg speed and the
   volatility to produce a congestion score !!
