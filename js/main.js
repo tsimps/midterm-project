@@ -120,7 +120,7 @@ var slide2 = {
     "Major Bus Nodes: A Closer Look";
   },
   body: function() {
-    document.getElementById("sidebar-text").innerHTML = "Slide 2";
+    document.getElementById("sidebar-text").innerHTML = "Use the dropdown menu below to examine a range of major bus nodes.";
   },
   debug: function() {
     console.log("2");
@@ -159,7 +159,7 @@ var slide3 = {
     "A Closer Look: Busses in the Germantown Neighborhood";
   },
   body: function() {
-    document.getElementById("sidebar-text").innerHTML = "This shows...";
+    document.getElementById("sidebar-text").innerHTML = "At times it can be useful to see what routes go through a particular neighobrhood. This shows all of the routes in Germantown, a historic North Philadelphia neighobrhood. You can see the particular imporance of Route 23, a former trolley line that is closely related to the neighobrhood's identity and is one of the heaviest trafficked routes in Philadelphia. Route 26 is also seen as a major link to the Broad Street Line.";
   },
   visual: function() {
     var germantownRoutes = [18, 23, 26, 53, 65, 704, 706, 707, 801, 802];
@@ -717,22 +717,26 @@ $(document).ready(function() {
 // could be used to dynamically size markers by zoom
 // this is complicated by the fact that the markers object is a layer group made
 // up of the actual markers. It's possible but hard to do.
+
 /*
 map.on('zoomend', function() {
-var currentZoom = map.getZoom();
-console.log('CURRENTZOOM', currentZoom);
+  var currentZoom = map.getZoom();
+  console.log('CURRENTZOOM', currentZoom);
 
-if (currentZoom > 15) {
-console.log(markers.getLayers()[0].options.radius);
+  if (currentZoom > 15) {
+    console.log(markers.getLayers()[0].options.radius);
 
-markers.setStyle(
-{ radius: 10 }
-);
-//markers.setSyle({
-//radius: markers.eachLayer(function(layer){return layer.options.radius;})
-//});
+    markers.setStyle(
+      { radius: currentZoom * 2, opacity: 1 }
+    );
+    //markers.setSyle({
+    //radius: markers.eachLayer(function(layer){return layer.options.radius;})
+    //});
 
-} else {
+  } else {
+    markers.setStyle(
+      { radius: 10, opacity: 1 }
+    );
 
-}});
-*/
+  }});
+  */
